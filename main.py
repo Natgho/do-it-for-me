@@ -1,6 +1,6 @@
 # Created by SezerBozkir<admin@sezerbozkir.com> at 10/18/2020
 import yaml
-
+from utils import SSHClient
 
 if __name__ == '__main__':
     # client = paramiko.SSHClient()
@@ -12,35 +12,8 @@ if __name__ == '__main__':
     #     print(line, end="")
     # resp = stdout.readlines()
     # print(resp)
-    # server = SSHClient()
+    server = SSHClient()
     # sonuc = server.send_command('pwd', show_output=False)
-    mysql = {"version": "3",
-             "services": {
-                 "mysql": {
-                     "container_name": "traveler_app_db",
-                     "restart": "always",
-                     "image": "mysql:latest",
-                     "ports": [
-                         "3306:3306"
-                     ],
-                     "environment": {
-                         "MYSQL_ROOT_PASSWORD": "burayi_degistir"  # TODO make it dynamic
-                     },
-                     "volumes": [
-                         "/root/management/mysql/data:/var/lib/mysql"  # TODO make it dynamic
-                     ]
-                 },
-                 "app": {
-                     "depends_on": ["mysql"],
-                     "image": "phpmyadmin/phpmyadmin",
-                     "container_name": "phpmyadmin",  # TODO make it dynamic
-                     "restart": "always",
-                     "ports": ["3307:80"],
-                     "environment": {
-                         "PMA_HOST": "mysql"
-                     }
-                 }
-             }
-             }
-    with open("sample.yaml", "w") as file:
-        output = yaml.dump(mysql, file)
+    server.add_service('mysql')
+    server.remove_service('mysql')
+    server.create_yaml()
