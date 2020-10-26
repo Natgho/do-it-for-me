@@ -6,7 +6,7 @@ compose_baseline = {"version": "3",
                     }
 mysql = {
     "mysql": {
-        "container_name": "traveler_app_db",
+        "container_name": "sample_db",  # TODO make it dynamic
         "restart": "always",
         "image": "mysql:latest",
         "ports": [
