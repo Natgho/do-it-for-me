@@ -12,7 +12,10 @@ if __name__ == '__main__':
     #     print(line, end="")
     # resp = stdout.readlines()
     # print(resp)
-    server = SSHClient()
+    server = SSHClient(ip="192.168.1.113",
+                       username="root",
+                       password="1",
+                       current_location='management')
     # sonuc = server.send_command('pwd', show_output=False)
     server.add_service('mysql')
     server.remove_service('mysql')
