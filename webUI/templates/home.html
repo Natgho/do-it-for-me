@@ -5,6 +5,9 @@
 {% block content %}
     {% if user.is_authenticated %}
         Hi {{ user.username }}!
+        <div class="col-md-4 offset-md-4">
+            <a class="btn btn-primary" href="{% url 'add_server' %}" role="button">Add Server</a>
+        </div>
         <p><a href="{% url 'logout' %}">Log Out</a></p>
     {% else %}
         <p>You are not logged in</p>
