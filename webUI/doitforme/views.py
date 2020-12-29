@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from doitforme.forms import AddServerForm
 # from utils import SSHClient
+from doitforme.models import Servers
 
 
 def index(request):
@@ -13,7 +14,9 @@ def index(request):
 
 @login_required
 def index(request):
-    return render(request, 'home.html')
+    servers = Servers.objects.all()
+    context = {'servers': servers}
+    return render(request, 'home.html', context)
 
 
 def sign_up(request):
@@ -41,4 +44,12 @@ def add_server(request):
             return redirect('home')
     context['form'] = form
     return render(request, 'server_operations/add.html', context)
-# do stuff
+
+
+@login_required
+def server_details(request, server_id):
+    context = {}
+    server = Servers.objects.get(id=server_id)
+    if server:
+        context['server'] = server
+    return render(request, 'server_operations/details.html', context)

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+    <div class="col-md-4 offset-md-4">
+    <p>Server IP: {{ server.ip_address }}</p>
+    <p>Owner: {{ server.owner.username }}</p>
+    </div>
+{% endblock %}
