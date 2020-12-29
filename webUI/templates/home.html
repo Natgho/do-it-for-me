@@ -5,10 +5,22 @@
 {% block content %}
     {% if user.is_authenticated %}
         Hi {{ user.username }}!
+        <table class="col-md-4 offset-md-4" aria-describedby="Server Information">
+            <tr>
+                <th>Server IP</th>
+                <th>Details</th>
+            </tr>
+            {% for server in servers %}
+                <tr>
+                    <th>{{ server.ip_address }}</th>
+                    <th><a class="btn btn-primary" href="{% url 'server_details' server_id=server.id %}" role="button">Server
+                        Detail</a></th>
+                </tr>
+            {% endfor %}
+        </table>
         <div class="col-md-4 offset-md-4">
             <a class="btn btn-primary" href="{% url 'add_server' %}" role="button">Add Server</a>
         </div>
-        <p><a href="{% url 'logout' %}">Log Out</a></p>
     {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'login' %}">Log In</a>

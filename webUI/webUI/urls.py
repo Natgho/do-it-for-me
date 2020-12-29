@@ -23,5 +23,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.index, name='home'),
     path('accounts/sign_up/', views.sign_up, name="sign-up"),
-    path('server/add', views.add_server, name="add_server")
+    path('server/add', views.add_server, name="add_server"),
+    path('server/<int:server_id>', views.server_details, name="server_details")
 ]

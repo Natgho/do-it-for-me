@@ -6,8 +6,10 @@ from doitforme.models import Servers
 
 
 class AddServerForm(forms.ModelForm):
-    # password = forms.CharField(widget)
 
     class Meta:
         model = Servers
         exclude = ["owner"]
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
