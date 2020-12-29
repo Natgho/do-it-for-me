@@ -1,11 +1,13 @@
+from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from doitforme.forms import AddServerForm
-# from utils import SSHClient
 from doitforme.models import Servers
+from sub_utils.utilities import SSHClient
 
 
 def index(request):
@@ -14,7 +16,10 @@ def index(request):
 
 @login_required
 def index(request):
-    servers = Servers.objects.all()
+    # messages.add_message(request, messages.INFO, 'Hello world.')
+    # messages.add_message(request, messages.WARNING, 'Hello world2.')
+    # messages.add_message(request, messages.ERROR, 'Hello world2.')
+    servers = Servers.objects.filter(owner=request.user)
     context = {'servers': servers}
     return render(request, 'home.html', context)
 
@@ -49,7 +54,22 @@ def add_server(request):
 @login_required
 def server_details(request, server_id):
     context = {}
-    server = Servers.objects.get(id=server_id)
+    server = Servers.objects.get(id=server_id, owner=request.user)
     if server:
         context['server'] = server
     return render(request, 'server_operations/details.html', context)
+
+
+@login_required
+def connection_check(request, server_id):
+    server = Servers.objects.get(id=server_id, owner=request.user)
+    try:
+        ssh_client = SSHClient(ip=server.ip_address,
+                               username=server.username,
+                               password=server.password,
+                               current_location='management')
+        status = True
+    except Exception as e:
+        print(e)
+        status = False
+    return JsonResponse({'status': status})

@@ -6,6 +6,7 @@ from django.db import models
 
 class Servers(models.Model):
     ip_address = models.GenericIPAddressField()
+    username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

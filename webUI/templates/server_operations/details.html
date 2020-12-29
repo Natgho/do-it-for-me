@@ -3,8 +3,29 @@
 {% block title %}Logout{% endblock %}
 
 {% block content %}
-    <div class="col-md-4 offset-md-4">
-    <p>Server IP: {{ server.ip_address }}</p>
-    <p>Owner: {{ server.owner.username }}</p>
+    <div class="col-md-12 offset-md-4">
+        <p>Server IP: {{ server.ip_address }}</p>
+        <p>Owner: {{ server.owner.username }}</p>
+        <button id="connection_check" class="btn btn-primary">Connection Check</button>
     </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            $("#connection_check").click(function () {
+                $.ajax(
+                    {
+                        type: "GET",
+                        url: "{% url 'connection_check' server_id=server.id %}",
+                        success: function (data) {
+                            if (data['status']){
+                                alert("Connection successful");
+                            }else {
+                                alert("Connection Failed.");
+                            }
+                        }
+                    })
+            });
+        });
+    </script>
 {% endblock %}
