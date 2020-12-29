@@ -2,7 +2,7 @@
 import paramiko
 from paramiko import AutoAddPolicy
 import yaml
-import constants
+import sub_utils.constants
 
 
 # paramiko.util.log_to_file('paramiko.log')
@@ -31,8 +31,8 @@ class SSHClient:
             self._sftp.mkdir(self._current_location)
 
         self._sftp.chdir("/root/" + self._current_location)
-        self.check_and_install_docker()
-        self._compose_yaml = constants.compose_baseline
+        # self.check_and_install_docker()
+        self._compose_yaml = sub_utils.constants.compose_baseline
 
     def send_command(self, command, show_output=True):
         response = ""
@@ -90,7 +90,7 @@ class SSHClient:
 
     def add_service(self, service: str):
         if service.lower() == 'mysql':
-            self._compose_yaml['services'].update(constants.mysql)
+            self._compose_yaml['services'].update(sub_utils.constants.mysql)
         elif service.lower() == 'redis':
             print("Coming soon")
         else:
@@ -98,7 +98,7 @@ class SSHClient:
 
     def remove_service(self, service):
         if service in self._compose_yaml['services'].keys():
-            for service_name in constants.mysql.keys():
+            for service_name in sub_utils.constants.mysql.keys():
                 del self._compose_yaml['services'][service_name]
         else:
             print("Service not found")

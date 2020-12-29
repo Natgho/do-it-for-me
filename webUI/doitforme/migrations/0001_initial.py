@@ -30,6 +30,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('ip_address', models.CharField(max_length=30)),
+                ('username', models.CharField(max_length=100)),
                 ('password', models.CharField(max_length=100)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),

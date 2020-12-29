@@ -1,6 +1,5 @@
 # Created by SezerBozkir<admin@sezerbozkir.com> at 10/18/2020
-import yaml
-from utils import SSHClient
+from sub_utils.utilities import SSHClient
 
 if __name__ == '__main__':
     # client = paramiko.SSHClient()
