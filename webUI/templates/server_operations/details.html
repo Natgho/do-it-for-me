@@ -4,13 +4,24 @@
 
 {% block content %}
     <div class="col-md-12 offset-md-4">
-        <p>Server IP: {{ server.ip_address }}</p>
-        <p>Owner: {{ server.owner.username }}</p>
-        <button id="connection_check" class="btn btn-primary">Connection Check</button>
-        <button id="get_logs" class="btn btn-primary">Get Logs</button>
+        <div>
+            <h3>Server Informations:</h3>
+            <p style="margin-top: 20px"><b>Server IP:</b> {{ server.ip_address }}</p>
+            <p><b>Owner:</b> {{ server.owner.username }}</p>
+        </div>
+        <div>
+            <h3>Server Operations:</h3>
+            <button id="connection_check" class="btn btn-primary">Connection Check</button>
+            <button id="install_docker" class="btn btn-primary">Install Docker and Docker-compose</button>
+        </div>
+        <div style="margin-top: 5px">
+            <h3>Log Operations:</h3>
+            <button id="get_logs" class="btn btn-primary">Get Logs</button>
+            <button id="clear_logs" class="btn btn-primary">Clear Logs</button>
+        </div>
         <div>
             <b>Server Logs:</b>
-            <pre     id="serverLog">Sampleeeee</pre>
+            <pre id="serverLog"></pre>
         </div>
     </div>
 {% endblock %}
@@ -18,6 +29,7 @@
     <script>
         $(document).ready(function () {
             $("#connection_check").click(function () {
+                var logInterval = setInterval(getLogs, 1000);
                 $.ajax(
                     {
                         type: "GET",
@@ -28,21 +40,64 @@
                             } else {
                                 alert("Connection Failed.");
                             }
+                        },
+                        complete: function () {
+                            clearInterval(logInterval);
                         }
                     })
             });
             $("#get_logs").click(function () {
+                getLogs()
+            })
+            $("#install_docker").click(function () {
+                var logInterval = setInterval(getLogs, 1000);
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'install_docker' server_id=server.id %}",
+                    success: function (data) {
+                        if (data['status']) {
+                            getLogs()
+                        } else {
+                            alert("Docker installation failed")
+                        }
+                    },
+                    complete: function () {
+                        clearInterval(logInterval);
+                    }
+                })
+            })
+            $("#clear_logs").click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'clear_logs' server_id=server.id %}",
+                    success: function (data) {
+                        if (data['status']) {
+                            alert("Logs Clear");
+                            getLogs()
+                        } else {
+                            alert("Log cannot Clear")
+                        }
+                    }
+                })
+
+            })
+
+            function getLogs() {
                 $.ajax(
                     {
                         type: "GET",
                         url: "{% url 'get_logs' server_id=server.id %}",
                         success: function (data) {
-                            console.log(data);
+                            //console.log(data);
                             $("#serverLog").text(data.log);
+                        },
+                        complete: function () {
                         }
                     }
                 )
-            })
+            }
+
+            getLogs();
         });
     </script>
 {% endblock %}

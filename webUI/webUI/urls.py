@@ -26,5 +26,7 @@ urlpatterns = [
     path('server/add', views.add_server, name="add_server"),
     path('server/<int:server_id>', views.server_details, name="server_details"),
     path('server/status/<int:server_id>', views.connection_check, name="connection_check"),
-    path('server/log/<int:server_id>', views.get_logs, name="get_logs")
+    path('server/log/<int:server_id>', views.get_logs, name="get_logs"),
+    path('server/log/remove/<int:server_id>', views.clear_logs, name="clear_logs"),
+    path('server/docker/install/<int:server_id>', views.install_docker, name="install_docker")
 ]

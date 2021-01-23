@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from doitforme.forms import AddServerForm
 from doitforme.models import Servers
-from sub_utils.utilities import SSHClient, read_log
+from sub_utils.utilities import SSHClient, read_log, clear_log
 
 
 def index(request):
@@ -83,3 +83,30 @@ def get_logs(request, server_id):
     except Exception as e:
         print(e)
         return JsonResponse({'log': e})
+
+
+@login_required()
+def clear_logs(requset, server_id):
+    status = True
+    try:
+        clear_log(server_id, requset.user)
+    except Exception as e:
+        print(e)
+        status = False
+    return JsonResponse({'status': status})
+
+
+@login_required()
+def install_docker(request, server_id):
+    status = True
+    server = Servers.objects.get(id=server_id, owner=request.user)
+    try:
+        ssh_client = SSHClient(ip=server.ip_address,
+                               username=server.username,
+                               password=server.password,
+                               current_location='management')
+        ssh_client.check_and_install_docker()
+    except Exception as e:
+        print(e)
+        status = False
+    return JsonResponse({'status': status})

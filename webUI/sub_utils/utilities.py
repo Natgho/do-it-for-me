@@ -135,3 +135,14 @@ def read_log(server_id, owner):
     except Exception as e:
         print(e)
     return False
+
+
+def clear_log(server_id, owner):
+    try:
+        server: Servers = Servers.objects.get(id=server_id, owner=owner)
+        server.log_data = ""
+        server.save()
+        return True
+    except Exception as e:
+        print(e)
+    return False
