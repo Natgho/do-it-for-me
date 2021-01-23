@@ -4,8 +4,9 @@ from paramiko import AutoAddPolicy
 import yaml
 import sub_utils.constants
 
-
 # paramiko.util.log_to_file('paramiko.log')
+from doitforme.models import Servers
+
 
 class SSHClient:
     def __init__(self,
@@ -26,7 +27,8 @@ class SSHClient:
         self._sftp: paramiko.SFTPClient = self.client.open_sftp()
 
         if not self.sftp_exist(self._current_location):
-            print(f"/root/{current_location} is not found. File creating.")
+            # print(f"/root/{current_location} is not found. File creating.")
+            add_log(self._ip, f"/root/{current_location} is not found. File creating.")
             self._sftp.chdir('/root')
             self._sftp.mkdir(self._current_location)
 
@@ -40,32 +42,38 @@ class SSHClient:
                                                          get_pty=True)
         for line in iter(stdout.readline, ""):
             if show_output:
-                print(line, end="")
+                add_log(ip_address=self._ip, message=line)
+                # print(line, end="")
             response += line
 
         return response
 
     def check_and_install_docker(self):
         exist = True
-        print("Docker status start to checking...")
+        # print("Docker status start to checking...")
+        add_log(self._ip, "Docker status start to checking...")
         result = self.send_command("docker -v", show_output=False)
         if "Docker version" not in result:
-            print("Docker is not installed. Installation started.")
+            # print("Docker is not installed. Installation started.")
+            add_log(self._ip, "Docker is not installed. Installation started.")
             self.send_command("curl -fsSL https://get.docker.com -o get-docker.sh")
             self.send_command("sh get-docker.sh")
             exist = False
         result = self.send_command("docker-compose -v", show_output=False)
         if "docker-compose version " not in result:
-            print("Docker-compose is not installed. Installation started.")
+            # print("Docker-compose is not installed. Installation started.")
+            add_log(self._ip, "Docker-compose is not installed. Installation started.")
             self.send_command(
                 """curl -L "https://github.com/docker/compose/releases/download/1.27.4/""" +
                 """docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose""")
             self.send_command("chmod +x /usr/local/bin/docker-compose")
             exist = False
         if exist:
-            print("Docker and/or docker-compose already exist.Installation process skipping.")
+            # print("Docker and/or docker-compose already exist.Installation process skipping.")
+            add_log(self._ip, "Docker and/or docker-compose already exist.Installation process skipping.")
         else:
-            print("Docker and/or docker-compose installed successfully.")
+            # print("Docker and/or docker-compose installed successfully.")
+            add_log(self._ip, "Docker and/or docker-compose installed successfully.")
 
     def change_current_directory(self, directory):
         self._current_location = directory
@@ -106,3 +114,24 @@ class SSHClient:
     def __del__(self):
         print("Connection closed.")
         self.client.close()
+
+
+def add_log(ip_address, message):
+    result = True
+    try:
+        server: Servers = Servers.objects.select_for_update().get(ip_address=ip_address)
+        server.log_data += message + "\n"
+        server.save()
+    except Exception as e:
+        print(e)
+        result = False
+    return result
+
+
+def read_log(server_id, owner):
+    try:
+        server: Servers = Servers.objects.get(id=server_id, owner=owner)
+        return server.log_data
+    except Exception as e:
+        print(e)
+    return False

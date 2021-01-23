@@ -29,11 +29,12 @@ class Migration(migrations.Migration):
             name='Servers',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ip_address', models.CharField(max_length=30)),
+                ('ip_address', models.GenericIPAddressField()),
                 ('username', models.CharField(max_length=100)),
                 ('password', models.CharField(max_length=100)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
+                ('log_data', models.TextField(blank=True, null=True)),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={

@@ -25,5 +25,6 @@ urlpatterns = [
     path('accounts/sign_up/', views.sign_up, name="sign-up"),
     path('server/add', views.add_server, name="add_server"),
     path('server/<int:server_id>', views.server_details, name="server_details"),
-    path('server/status/<int:server_id>', views.connection_check, name="connection_check")
+    path('server/status/<int:server_id>', views.connection_check, name="connection_check"),
+    path('server/log/<int:server_id>', views.get_logs, name="get_logs")
 ]

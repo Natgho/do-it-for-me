@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from doitforme.forms import AddServerForm
 from doitforme.models import Servers
-from sub_utils.utilities import SSHClient
+from sub_utils.utilities import SSHClient, read_log
 
 
 def index(request):
@@ -73,3 +73,13 @@ def connection_check(request, server_id):
         print(e)
         status = False
     return JsonResponse({'status': status})
+
+
+@login_required()
+def get_logs(request, server_id):
+    try:
+        log = read_log(server_id, request.user)
+        return JsonResponse({'log': log})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'log': e})
