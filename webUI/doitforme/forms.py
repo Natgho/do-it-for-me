@@ -9,7 +9,7 @@ class AddServerForm(forms.ModelForm):
 
     class Meta:
         model = Servers
-        exclude = ["owner"]
+        exclude = ["owner", "log_data"]
         widgets = {
             'password': forms.PasswordInput(),
         }
